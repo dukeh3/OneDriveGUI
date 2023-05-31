@@ -451,7 +451,11 @@ class wizardPage_create_shared_library(QWizardPage):
         _library_id = self.library_dict[_library_name]
         profile_name = f"SharePoint_{_site_name}_{_library_name}"
 
-        sync_dir = os.path.expanduser(f"~/{profile_name}")
+        account_name = self.comboBox_profile_list.currentText()
+        site_name = self.comboBox_sharepoint_site_list.currentText()
+        library_name = self.comboBox_sharepoint_library_list.currentText()
+
+        sync_dir = os.path.expanduser(f"~/OneDrive/{account_name}/SharePoint/{site_name}/{library_name}/")
         config_path = os.path.expanduser(f"~/.config/onedrive/accounts/{profile_name}/config")
 
         # Load all default values.
@@ -577,7 +581,7 @@ class wizardPage_create(QWizardPage):
         self.lineEdit_sync_dir.setText(dir_name)
 
     def update_sync_dir(self, text):
-        self.lineEdit_sync_dir.setText(f"~/OneDrive_{text}")
+        self.lineEdit_sync_dir.setText(f"~/OneDrive/{text}/Home")
 
     def enable_create_button(self):
         """Enables wizard 'Create' button only when below conditions are met."""
@@ -1063,7 +1067,8 @@ class ProfileStatusPage(QWidget, Ui_status_page):
 
     def open_sync_dir(self):
         sync_dir = global_config[self.profile_name]["onedrive"]["sync_dir"].strip('"')
-        url = QUrl(os.path.expanduser(sync_dir))
+        full_path = os.path.expanduser(sync_dir)
+        url = QUrl.fromLocalFile(full_path)
         QDesktopServices.openUrl(url)
 
     def show_gui_settings_window(self):
