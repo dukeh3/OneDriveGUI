@@ -58,7 +58,7 @@ from ui.ui_gui_settings_window import Ui_gui_settings_window
 # Import for login windows.
 # Don't use WebEngine login window when running from AppImage.
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-APPIMAGE = True if "tmp/.mount_one" in DIR_PATH.lower() else False
+APPIMAGE = True if "mount_one" in DIR_PATH.lower() else False
 if APPIMAGE:
     from ui.ui_external_login import Ui_ExternalLoginWindow
 else:
@@ -1245,7 +1245,7 @@ class ProfileSettingsPage(QWidget, Ui_profile_settings):
         """
         Starts OneDrive with --list-shared-folders argument and populates QListWidget list of SharePoint Sites emitted by MaintenanceWorker.
         """
-        options = "--list-shared-folders --resync --resync-auth"
+        options = "--list-shared-folders"
 
         self.listWidget_available_business_folders.clear()
 
@@ -2913,8 +2913,13 @@ def create_global_config():
         if "free_space" not in profiles[profile]:  # add 'free_space' value if missing from older versions
             profiles[profile]["free_space"] = _default_profile_config["free_space"]
 
-        profiles[profile].update(default_od_config)
-        profiles[profile].update(od_config)
+        # Load default Onedrive values
+        profiles[profile]["onedrive"] = {}
+        profiles[profile]["onedrive"].update(default_od_config["onedrive"])
+
+        # Load user values from config
+
+        profiles[profile]["onedrive"].update(od_config["onedrive"])
 
         # this option is not supported since OneDrive v2.4.20 - #42
         # TODO: Remove after some time...
